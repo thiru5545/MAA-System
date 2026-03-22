@@ -50,13 +50,13 @@
             </h2>
             <div id="connectionStatus" class="flex items-center gap-3">
                 <span class="relative flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
-                <span class="text-gray-700 font-bold uppercase text-sm tracking-widest">Disconnected</span>
+                <span class="text-green-600 font-bold uppercase text-sm tracking-widest">Connected</span>
             </div>
             <div class="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-500 leading-relaxed border border-gray-100">
-                System initializing... Connect hardware to begin sample quantification.
+                Hardware Link Established. System is ready for sample quantification.
             </div>
         </div>
 
@@ -117,7 +117,7 @@
                         <span class="text-xs font-bold text-gray-400 uppercase">Optical Density</span>
                         <p class="text-gray-700 font-semibold">Absorbance (510nm)</p>
                     </div>
-                    <span id="absorbanceValue" class="text-xl font-black text-purple-700">--</span>
+                    <span id="absorbanceValue" class="text-xl font-black text-purple-700">0.000 Abs</span>
                 </div>
                 <!-- Cadmium Concentration -->
                 <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
@@ -125,7 +125,7 @@
                         <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Cd)</span>
                         <p class="text-gray-700 font-semibold">Cadmium Conc.</p>
                     </div>
-                    <span id="cadmiumValue" class="text-xl font-black text-gray-900">--</span>
+                    <span id="cadmiumValue" class="text-xl font-black text-gray-900">0.000 ppm</span>
                 </div>
                 <!-- Lead Concentration -->
                 <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
@@ -133,13 +133,13 @@
                         <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Pb)</span>
                         <p class="text-gray-700 font-semibold">Lead Conc.</p>
                     </div>
-                    <span id="leadValue" class="text-xl font-black text-gray-900">--</span>
+                    <span id="leadValue" class="text-xl font-black text-gray-900">0.000 ppm</span>
                 </div>
             </div>
             <!-- Overall Status -->
             <div class="mt-6 overflow-hidden rounded-xl border-2 border-dashed border-gray-200" id="statusBoxContainer">
                 <div class="p-5 text-center bg-gray-50 transition-all duration-300" id="statusBox">
-                    <span id="overallStatus" class="font-black text-lg text-gray-400 uppercase tracking-widest">Awaiting Analysis...</span>
+                    <span id="overallStatus" class="font-black text-lg text-gray-700 uppercase tracking-widest">System Ready</span>
                 </div>
             </div>
         </div>
@@ -161,15 +161,17 @@
                 { abs: "0.815", cd: "5.1", pb: "0.009", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" },
                 { abs: "0.782", cd: "0.004", pb: "5.11", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
             ],
-            // beverages: [
-            //     { abs: "0.045", cd: "0.002", pb: "0.003", status: "Safe To Consume", color: "bg-green-500" },
-            //     { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
-            // ]
-
-             beverages: [
-                { abs: "--", cd: "--", pb: "--", status: "not analyzed", color: "bg-green-500" },
-                // { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            beverages: [
+                { abs: "0.045", cd: "0.002", pb: "0.003", status: "Safe To Consume", color: "bg-green-500" },
+                { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
             ]
+        };
+
+        // Counters to track the current index for each sample type
+        const sampleCounters = {
+            milk: 0,
+            water: 0,
+            beverages: 0
         };
 
         window.onload = function() {
@@ -177,24 +179,12 @@
             const standardButton = document.getElementById('standardButton');
             const sampleButton = document.getElementById('sampleButton');
             const loadingIndicator = document.getElementById('loadingIndicator');
-            const connectionStatus = document.getElementById('connectionStatus');
             const absorbanceValue = document.getElementById('absorbanceValue');
             const cadmiumValue = document.getElementById('cadmiumValue');
             const leadValue = document.getElementById('leadValue');
             const overallStatus = document.getElementById('overallStatus');
             const statusBox = document.getElementById('statusBox');
             const sampleTypeSelect = document.getElementById('sampleType');
-
-            // Simulate initial connection success after a short delay
-            setTimeout(() => {
-                connectionStatus.innerHTML = `
-                    <span class="relative flex h-3 w-3">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span>
-                    <span class="text-green-600 font-bold uppercase text-sm tracking-widest">Connected</span>
-                `;
-            }, 50);
 
             function updateUIStatus(text, colorClass) {
                 overallStatus.textContent = text;
@@ -229,21 +219,27 @@
                         updateUIStatus("Calibration Successful", "bg-orange-500");
                     } 
                     else if (mode === 'standard') {
-                        absorbanceValue.innerText = "0.018 Abs";  //0.050 Abs
-                        cadmiumValue.innerText = "0.000 ppm";      //0.005 ppm
-                        leadValue.innerText = "0.000 ppm";      //0.008 ppm
+                        absorbanceValue.innerText = "0.050 Abs";
+                        cadmiumValue.innerText = "0.005 ppm";
+                        leadValue.innerText = "0.008 ppm";
                         updateUIStatus("Standard Reference Loaded", "bg-gray-600");
                     } 
                     else if (mode === 'sample') {
                         const dataset = SAMPLE_DATA[sampleType] || SAMPLE_DATA['beverages'];
-                        const selectedSample = dataset[Math.floor(Math.random() * dataset.length)];
+                        
+                        // Get the current index for this sample type
+                        const currentIndex = sampleCounters[sampleType];
+                        const selectedSample = dataset[currentIndex];
 
-                        // Force UI update
+                        // Update results
                         absorbanceValue.innerText = selectedSample.abs + " Abs";
                         cadmiumValue.innerText = selectedSample.cd + " ppm";
                         leadValue.innerText = selectedSample.pb + " ppm";
                         
                         updateUIStatus(selectedSample.status, selectedSample.color);
+
+                        // Increment counter and loop back to 0 if at the end of dataset
+                        sampleCounters[sampleType] = (currentIndex + 1) % dataset.length;
                     }
                     
                     // Hide loading and re-enable
@@ -252,7 +248,7 @@
                         b.classList.remove('btn-disabled');
                         b.disabled = false;
                     });
-                }, 8);
+                }, 800);
             }
 
             calibrateButton.addEventListener('click', () => performReading('calibrate'));
