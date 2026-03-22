@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metallotoxin Analyzer</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #5d3587; /* A shade of purple */
+        }
+        .btn-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="text-gray-900 antialiased p-4">
+
+    <!-- Main Container -->
+    <div class="max-w-xl mx-auto py-8">
+        <header class="text-center mb-10">
+            <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-start mb-4">
+                <!-- University Logo and Info -->
+                <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4 text-center">
+                    <div class="w-24 h-24 mx-auto mb-2 bg-white rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-300">
+                        <img src="REC Logo.png" alt="REC Logo" class="max-w-full max-h-full object-contain" onerror="this.src='https://via.placeholder.com/150?text=REC+Logo'">
+                    </div>
+                    <p class="text-xs text-white font-semibold uppercase tracking-wider">Dept. of Food Tech</p>
+                </div>
+                <!-- Title and Subtitle -->
+                <div class="text-center sm:text-left">
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Metallotoxin Analyzer</h1>
+                    <p class="text-purple-100 mt-1 opacity-90">Heavy Metal Detection System</p>
+                    <p class="text-yellow-300 mt-3 text-sm font-bold uppercase tracking-wide">Developed By Tharini R.K, Varsha K & Tejesvi TT.</p>
+                    <p class="text-purple-200 text-xs mt-1">Mentor: Mr. R. ANAND, Assistant Professor, Food Tech, REC.</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Analyzer Status Section -->
+        <div class="bg-white rounded-xl shadow-2xl p-6 mb-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                Analyzer Status
+            </h2>
+            <div id="connectionStatus" class="flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                <span class="text-gray-700 font-bold uppercase text-sm tracking-widest">Disconnected</span>
+            </div>
+            <div class="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-500 leading-relaxed border border-gray-100">
+                System initializing... Connect hardware to begin sample quantification.
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="bg-white rounded-xl shadow-2xl p-6 mb-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+                System Controls
+            </h2>
+            
+            <!-- Sample Type Selection -->
+            <div class="mb-6">
+                <label for="sampleType" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Select Matrix Type</label>
+                <select id="sampleType" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none font-medium">
+                    <option value="milk">Milk</option>
+                    <option value="water">Water</option>
+                    <option value="beverages">Other Beverages</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button id="calibrateButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-orange-200">
+                    Calibrate
+                </button>
+                <button id="standardButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-gray-200">
+                    Read Std
+                </button>
+                <button id="sampleButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-blue-200">
+                    Read Sample
+                </button>
+            </div>
+            <div id="loadingIndicator" class="mt-6 hidden">
+                <div class="flex items-center justify-center gap-3 text-purple-600 animate-pulse font-bold text-sm">
+                    <svg class="animate-spin h-5 w-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    ANALYZING SAMPLE...
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display Section -->
+        <div class="bg-white rounded-xl shadow-2xl p-6">
+            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Detection Results
+            </h2>
+            <div class="space-y-3">
+                <!-- Absorbance -->
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Optical Density</span>
+                        <p class="text-gray-700 font-semibold">Absorbance (510nm)</p>
+                    </div>
+                    <span id="absorbanceValue" class="text-xl font-black text-purple-700">--</span>
+                </div>
+                <!-- Cadmium Concentration -->
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Cd)</span>
+                        <p class="text-gray-700 font-semibold">Cadmium Conc.</p>
+                    </div>
+                    <span id="cadmiumValue" class="text-xl font-black text-gray-900">--</span>
+                </div>
+                <!-- Lead Concentration -->
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Pb)</span>
+                        <p class="text-gray-700 font-semibold">Lead Conc.</p>
+                    </div>
+                    <span id="leadValue" class="text-xl font-black text-gray-900">--</span>
+                </div>
+            </div>
+            <!-- Overall Status -->
+            <div class="mt-6 overflow-hidden rounded-xl border-2 border-dashed border-gray-200" id="statusBoxContainer">
+                <div class="p-5 text-center bg-gray-50 transition-all duration-300" id="statusBox">
+                    <span id="overallStatus" class="font-black text-lg text-gray-400 uppercase tracking-widest">Awaiting Analysis...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for functionality -->
+    <script>
+        // Data derived from provided study values
+        const SAMPLE_DATA = {
+            water: [
+                { abs: "0.021", cd: "0.003", pb: "0.002", status: "Safe To Consume", color: "bg-green-500" },
+                { abs: "0.018", cd: "0.002", pb: "0.001", status: "Safe To Consume", color: "bg-green-500" },
+                { abs: "0.742", cd: "5.02", pb: "0.003", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" },
+                { abs: "0.695", cd: "0.002", pb: "4.96", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            ],
+            milk: [
+                { abs: "0.062", cd: "0.004", pb: "0.006", status: "Safe To Consume", color: "bg-green-500" },
+                { abs: "0.074", cd: "0.005", pb: "0.007", status: "Safe To Consume", color: "bg-green-500" },
+                { abs: "0.815", cd: "5.1", pb: "0.009", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" },
+                { abs: "0.782", cd: "0.004", pb: "5.11", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            ],
+            // beverages: [
+            //     { abs: "0.045", cd: "0.002", pb: "0.003", status: "Safe To Consume", color: "bg-green-500" },
+            //     { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            // ]
+
+             beverages: [
+                { abs: "--", cd: "--", pb: "--", status: "not analyzed", color: "bg-green-500" },
+                // { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            ]
+        };
+
+        window.onload = function() {
+            const calibrateButton = document.getElementById('calibrateButton');
+            const standardButton = document.getElementById('standardButton');
+            const sampleButton = document.getElementById('sampleButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const absorbanceValue = document.getElementById('absorbanceValue');
+            const cadmiumValue = document.getElementById('cadmiumValue');
+            const leadValue = document.getElementById('leadValue');
+            const overallStatus = document.getElementById('overallStatus');
+            const statusBox = document.getElementById('statusBox');
+            const sampleTypeSelect = document.getElementById('sampleType');
+
+            // Simulate initial connection success after a short delay
+            setTimeout(() => {
+                connectionStatus.innerHTML = `
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <span class="text-green-600 font-bold uppercase text-sm tracking-widest">Connected</span>
+                `;
+            }, 50);
+
+            function updateUIStatus(text, colorClass) {
+                overallStatus.textContent = text;
+                overallStatus.classList.remove('text-gray-400', 'text-white', 'text-gray-700');
+                
+                if (colorClass === 'bg-gray-50') {
+                    overallStatus.classList.add('text-gray-700');
+                    statusBox.className = "p-5 text-center bg-gray-50 transition-all duration-300";
+                } else {
+                    overallStatus.classList.add('text-white');
+                    statusBox.className = `p-5 text-center ${colorClass} shadow-inner transition-all duration-300 border-none`;
+                }
+            }
+
+            // Function to handle reading and updating the UI
+            function performReading(mode) {
+                // Show loading indicator and disable all buttons
+                loadingIndicator.classList.remove('hidden');
+                [calibrateButton, standardButton, sampleButton].forEach(b => {
+                    b.classList.add('btn-disabled');
+                    b.disabled = true;
+                });
+
+                // Simulate processing time
+                setTimeout(() => {
+                    const sampleType = sampleTypeSelect.value;
+                    
+                    if (mode === 'calibrate') {
+                        absorbanceValue.innerText = "0.000 Abs";
+                        cadmiumValue.innerText = "0.000 ppm";
+                        leadValue.innerText = "0.000 ppm";
+                        updateUIStatus("Calibration Successful", "bg-orange-500");
+                    } 
+                    else if (mode === 'standard') {
+                        absorbanceValue.innerText = "0.018 Abs";  //0.050 Abs
+                        cadmiumValue.innerText = "0.000 ppm";      //0.005 ppm
+                        leadValue.innerText = "0.000 ppm";      //0.008 ppm
+                        updateUIStatus("Standard Reference Loaded", "bg-gray-600");
+                    } 
+                    else if (mode === 'sample') {
+                        const dataset = SAMPLE_DATA[sampleType] || SAMPLE_DATA['beverages'];
+                        const selectedSample = dataset[Math.floor(Math.random() * dataset.length)];
+
+                        // Force UI update
+                        absorbanceValue.innerText = selectedSample.abs + " Abs";
+                        cadmiumValue.innerText = selectedSample.cd + " ppm";
+                        leadValue.innerText = selectedSample.pb + " ppm";
+                        
+                        updateUIStatus(selectedSample.status, selectedSample.color);
+                    }
+                    
+                    // Hide loading and re-enable
+                    loadingIndicator.classList.add('hidden');
+                    [calibrateButton, standardButton, sampleButton].forEach(b => {
+                        b.classList.remove('btn-disabled');
+                        b.disabled = false;
+                    });
+                }, 8);
+            }
+
+            calibrateButton.addEventListener('click', () => performReading('calibrate'));
+            standardButton.addEventListener('click', () => performReading('standard'));
+            sampleButton.addEventListener('click', () => performReading('sample'));
+        };
+    </script>
+</body>
+</html>
