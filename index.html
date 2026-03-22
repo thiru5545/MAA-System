@@ -162,8 +162,8 @@
                 { abs: "0.782", cd: "0.004", pb: "5.11", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
             ],
             beverages: [
-                { abs: "0.045", cd: "0.002", pb: "0.003", status: "Safe To Consume", color: "bg-green-500" },
-                { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+            { abs: "--", cd: "--", pb: "--", status: "NOT AN ANALYZED SAMPLE", color: "bg-green-500" },
+                // { abs: "0.912", cd: "6.2", pb: "5.4", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
             ]
         };
 
@@ -219,9 +219,9 @@
                         updateUIStatus("Calibration Successful", "bg-orange-500");
                     } 
                     else if (mode === 'standard') {
-                        absorbanceValue.innerText = "0.050 Abs";
-                        cadmiumValue.innerText = "0.005 ppm";
-                        leadValue.innerText = "0.008 ppm";
+                        absorbanceValue.innerText = "0.008 Abs";
+                        cadmiumValue.innerText = "0.000 ppm";
+                        leadValue.innerText = "0.000 ppm";
                         updateUIStatus("Standard Reference Loaded", "bg-gray-600");
                     } 
                     else if (mode === 'sample') {
