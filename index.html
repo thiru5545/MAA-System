@@ -3,163 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metallotoxin Analyzer</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Metallotoxin Analyzer Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #5d3587; /* A shade of purple */
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a, #020617);
+            color: #f8fafc;
+            min-height: 100vh;
         }
-        .btn-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glow-green { text-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+        .glow-red { text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+        .btn-glow:hover { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
-<body class="text-gray-900 antialiased p-4">
+<body class="antialiased p-4 md:p-8">
 
-    <!-- Main Container -->
-    <div class="max-w-xl mx-auto py-8">
-        <header class="text-center mb-10">
-            <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-start mb-4">
-                <!-- University Logo and Info -->
-                <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4 text-center">
-                    <div class="w-24 h-24 mx-auto mb-2 bg-white rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-300">
-                        <img src="REC Logo.png" alt="REC Logo" class="max-w-full max-h-full object-contain" onerror="this.src='https://via.placeholder.com/150?text=REC+Logo'">
+    <div class="max-w-6xl mx-auto">
+        <!-- Technical Header -->
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6 border-b border-white/10 pb-6">
+            <div class="flex items-center gap-5">
+                <div class="relative">
+                    <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg shadow-indigo-500/20">
+                        <img src="REC Logo.png" alt="REC Logo" class="max-w-full max-h-full object-contain" onerror="this.src='https://via.placeholder.com/150?text=REC'">
                     </div>
-                    <p class="text-xs text-white font-semibold uppercase tracking-wider">Dept. of Food Tech</p>
+                    <div class="absolute -bottom-2 -right-2 bg-blue-500 text-[10px] font-bold px-2 py-1 rounded-md">V2.4</div>
                 </div>
-                <!-- Title and Subtitle -->
-                <div class="text-center sm:text-left">
-                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Metallotoxin Analyzer</h1>
-                    <p class="text-purple-100 mt-1 opacity-90">Heavy Metal Detection System</p>
-                    <p class="text-yellow-300 mt-3 text-sm font-bold uppercase tracking-wide">Developed By Tharini R.K, Varsha K & Tejesvi TT.</p>
-                    <p class="text-purple-200 text-xs mt-1">Mentor: Mr. R. ANAND, Assistant Professor, Food Tech, REC.</p>
+                <div>
+                    <h1 class="text-4xl font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">
+                        METALLOTOXIN <span class="text-white">PRO</span>
+                    </h1>
+                    <p class="text-slate-400 text-sm font-medium tracking-wide">High-Precision Spectrophotometric Analysis</p>
+                    <div class="mt-2 flex gap-3 text-[10px] font-bold uppercase tracking-widest text-indigo-400">
+                        <span>Developed By: Tharini R.K, Varsha K, Tejesvi TT</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl px-6 py-4 flex items-center gap-6">
+                <div class="text-right">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold mb-1">System Status</p>
+                    <div id="connectionStatus" class="flex items-center justify-end gap-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-emerald-400 font-bold text-xs mono uppercase">Live Link</span>
+                    </div>
+                </div>
+                <div class="h-10 w-[1px] bg-white/10"></div>
+                <div class="text-right">
+                    <p class="text-[10px] uppercase text-slate-500 font-bold mb-1">Current Mentor</p>
+                    <p class="text-xs font-semibold text-slate-200 uppercase">Mr. R. ANAND, REC</p>
                 </div>
             </div>
         </header>
 
-        <!-- Analyzer Status Section -->
-        <div class="bg-white rounded-xl shadow-2xl p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                Analyzer Status
-            </h2>
-            <div id="connectionStatus" class="flex items-center gap-3">
-                <span class="relative flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                </span>
-                <span class="text-green-600 font-bold uppercase text-sm tracking-widest">Connected</span>
-            </div>
-            <div class="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-500 leading-relaxed border border-gray-100">
-                Hardware Link Established. System is ready for sample quantification.
-            </div>
-        </div>
-
-        <!-- Action Section -->
-        <div class="bg-white rounded-xl shadow-2xl p-6 mb-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                </svg>
-                System Controls
-            </h2>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
             
-            <!-- Sample Type Selection -->
-            <div class="mb-6">
-                <label for="sampleType" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Select Matrix Type</label>
-                <select id="sampleType" class="block w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all outline-none font-medium">
-                    <option value="milk">Milk</option>
-                    <option value="water">Water</option>
-                    <option value="beverages">Other Beverages</option>
-                </select>
+            <!-- Left Column: Controls -->
+            <div class="lg:col-span-4 space-y-6">
+                <section class="glass-panel rounded-3xl p-6">
+                    <h3 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div> Configuration
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-3 px-1">Matrix Selection</label>
+                            <select id="sampleType" class="w-full bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all cursor-pointer font-semibold">
+                                <option value="milk">🥛 Bovine Milk</option>
+                                <option value="water">💧 Potable Water</option>
+                                <option value="beverages">🍹 Synthetic Beverages</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3">
+                            <button id="calibrateButton" class="group relative overflow-hidden bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl transition-all border border-slate-700 flex items-center justify-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-orange-500"></div> Calibrate 
+                            </button>
+                            <button id="standardButton" class="group bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl transition-all border border-slate-700 flex items-center justify-center gap-2">
+                                <div class="w-2 h-2 rounded-full bg-slate-400"></div> Read Reference
+                            </button>
+                            <button id="sampleButton" class="bg-gradient-to-br from-blue-600 to-indigo-700 hover:from-blue-500 hover:to-indigo-600 text-white font-black py-5 rounded-xl transition-all shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3 btn-glow">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                EXECUTE ANALYSIS
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="loadingIndicator" class="hidden glass-panel rounded-2xl p-4 border-blue-500/30">
+                    <div class="flex items-center gap-4">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                        </div>
+                        <span class="text-xs font-black uppercase tracking-widest text-blue-400">Processing Photons...</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Buttons -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button id="calibrateButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-orange-200">
-                    Calibrate
-                </button>
-                <button id="standardButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-gray-200">
-                    Read Std
-                </button>
-                <button id="sampleButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md hover:shadow-lg transition-all focus:ring-4 focus:ring-blue-200">
-                    Read Sample
-                </button>
-            </div>
-            <div id="loadingIndicator" class="mt-6 hidden">
-                <div class="flex items-center justify-center gap-3 text-purple-600 animate-pulse font-bold text-sm">
-                    <svg class="animate-spin h-5 w-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    ANALYZING SAMPLE...
-                </div>
-            </div>
-        </div>
+            <!-- Right Column: Results Visualization -->
+            <div class="lg:col-span-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Absorbance Card -->
+                    <div class="glass-panel rounded-3xl p-6 border-l-4 border-l-indigo-500">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Absorbance Index</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="absorbanceValue" class="text-4xl font-black mono text-indigo-400">0.000</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase">Abs</span>
+                        </div>
+                        <div class="mt-4 w-full bg-slate-800 rounded-full h-1.5">
+                            <div id="absBar" class="bg-indigo-500 h-1.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                        </div>
+                    </div>
 
-        <!-- Results Display Section -->
-        <div class="bg-white rounded-xl shadow-2xl p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Detection Results
-            </h2>
-            <div class="space-y-3">
-                <!-- Absorbance -->
-                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase">Optical Density</span>
-                        <p class="text-gray-700 font-semibold">Absorbance (510nm)</p>
+                    <!-- Cadmium Card -->
+                    <div class="glass-panel rounded-3xl p-6 border-l-4 border-l-emerald-500">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Cadmium (Cd)</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="cadmiumValue" class="text-4xl font-black mono text-slate-100">0.000</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase">ppm</span>
+                        </div>
+                        <p class="text-[10px] mt-4 text-emerald-500/80 font-bold uppercase">Threshold: 0.05 ppm</p>
                     </div>
-                    <span id="absorbanceValue" class="text-xl font-black text-purple-700">0.000 Abs</span>
-                </div>
-                <!-- Cadmium Concentration -->
-                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Cd)</span>
-                        <p class="text-gray-700 font-semibold">Cadmium Conc.</p>
+
+                    <!-- Lead Card -->
+                    <div class="glass-panel rounded-3xl p-6 border-l-4 border-l-emerald-500">
+                        <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Lead (Pb)</p>
+                        <div class="flex items-baseline gap-2">
+                            <span id="leadValue" class="text-4xl font-black mono text-slate-100">0.000</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase">ppm</span>
+                        </div>
+                        <p class="text-[10px] mt-4 text-emerald-500/80 font-bold uppercase">Threshold: 0.05 ppm</p>
                     </div>
-                    <span id="cadmiumValue" class="text-xl font-black text-gray-900">0.000 ppm</span>
                 </div>
-                <!-- Lead Concentration -->
-                <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 flex justify-between items-center">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400 uppercase">Toxic Metal (Pb)</span>
-                        <p class="text-gray-700 font-semibold">Lead Conc.</p>
+
+                <!-- Main Status Display -->
+                <div id="statusContainer" class="glass-panel rounded-[2rem] p-8 border-2 border-dashed border-slate-700 transition-all duration-500">
+                    <div class="flex flex-col items-center justify-center text-center py-10">
+                        <div id="statusIcon" class="mb-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h2 id="overallStatus" class="text-2xl font-black uppercase tracking-[0.2em] text-slate-600 mb-2">SYSTEM STANDBY</h2>
+                        <p id="statusDesc" class="text-slate-500 text-sm max-w-md mx-auto">Please select a matrix type and execute the analysis process to quantify metallic concentration.</p>
                     </div>
-                    <span id="leadValue" class="text-xl font-black text-gray-900">0.000 ppm</span>
                 </div>
-            </div>
-            <!-- Overall Status -->
-            <div class="mt-6 overflow-hidden rounded-xl border-2 border-dashed border-gray-200" id="statusBoxContainer">
-                <div class="p-5 text-center bg-gray-50 transition-all duration-300" id="statusBox">
-                    <span id="overallStatus" class="font-black text-lg text-gray-700 uppercase tracking-widest">System Ready</span>
-                </div>
+
+                <!-- Footer Stats -->
+                <footer class="flex justify-between items-center text-[10px] font-bold text-slate-600 uppercase tracking-widest px-2">
+                    <span>Hardware: OP-510 Sensors Active</span>
+                    <span>Last Calibration: <span id="lastCal">Never</span></span>
+                    <span>Session ID: M7-8902</span>
+                </footer>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript for functionality -->
     <script>
-        // Data derived from provided study values
         const SAMPLE_DATA = {
             water: [
-                { abs: "0.021", cd: "0.003", pb: "0.002", status: "Safe To Consume", color: "bg-green-500" },
-                { abs: "0.018", cd: "0.002", pb: "0.001", status: "Safe To Consume", color: "bg-green-500" },
-                { abs: "0.742", cd: "5.02", pb: "0.003", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" },
-                { abs: "0.695", cd: "0.002", pb: "4.96", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+                { abs: "0.021", cd: "0.003", pb: "0.002", status: "SAFE TO CONSUME", type: "SUCCESS" },
+                { abs: "0.018", cd: "0.002", pb: "0.001", status: "SAFE TO CONSUME", type: "SUCCESS" },
+                { abs: "0.742", cd: "5.02", pb: "0.003", status: "UNSAFE CONTAMINATION", type: "DANGER" },
+                { abs: "0.695", cd: "0.002", pb: "4.96", status: "UNSAFE CONTAMINATION", type: "DANGER" }
             ],
             milk: [
-                { abs: "0.062", cd: "0.004", pb: "0.006", status: "Safe To Consume", color: "bg-green-500" },
-                { abs: "0.074", cd: "0.005", pb: "0.007", status: "Safe To Consume", color: "bg-green-500" },
-                { abs: "0.815", cd: "5.1", pb: "0.009", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" },
-                { abs: "0.782", cd: "0.004", pb: "5.11", status: "Unsafe – Heavy Metal Contamination", color: "bg-red-500" }
+                { abs: "0.062", cd: "0.004", pb: "0.006", status: "SAFE TO CONSUME", type: "SUCCESS" },
+                { abs: "0.074", cd: "0.005", pb: "0.007", status: "SAFE TO CONSUME", type: "SUCCESS" },
+                { abs: "0.815", cd: "5.1", pb: "0.009", status: "UNSAFE CONTAMINATION", type: "DANGER" },
+                { abs: "0.782", cd: "0.004", pb: "5.11", status: "UNSAFE CONTAMINATION", type: "DANGER" }
             ],
             beverages: [
             { abs: "--", cd: "--", pb: "--", status: "NOT AN ANALYZED SAMPLE", color: "bg-green-500" },
@@ -167,93 +199,99 @@
             ]
         };
 
-        // Counters to track the current index for each sample type
-        const sampleCounters = {
-            milk: 0,
-            water: 0,
-            beverages: 0
-        };
+        const counters = { milk: 0, water: 0, beverages: 0 };
 
         window.onload = function() {
-            const calibrateButton = document.getElementById('calibrateButton');
-            const standardButton = document.getElementById('standardButton');
-            const sampleButton = document.getElementById('sampleButton');
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            const absorbanceValue = document.getElementById('absorbanceValue');
-            const cadmiumValue = document.getElementById('cadmiumValue');
-            const leadValue = document.getElementById('leadValue');
-            const overallStatus = document.getElementById('overallStatus');
-            const statusBox = document.getElementById('statusBox');
+            const calibrateBtn = document.getElementById('calibrateButton');
+            const standardBtn = document.getElementById('standardButton');
+            const sampleBtn = document.getElementById('sampleButton');
+            const loader = document.getElementById('loadingIndicator');
+            
+            const absVal = document.getElementById('absorbanceValue');
+            const cdVal = document.getElementById('cadmiumValue');
+            const pbVal = document.getElementById('leadValue');
+            const absBar = document.getElementById('absBar');
+            
+            const mainStatus = document.getElementById('overallStatus');
+            const statusDesc = document.getElementById('statusDesc');
+            const statusContainer = document.getElementById('statusContainer');
+            const statusIcon = document.getElementById('statusIcon');
+            const lastCalText = document.getElementById('lastCal');
             const sampleTypeSelect = document.getElementById('sampleType');
 
-            function updateUIStatus(text, colorClass) {
-                overallStatus.textContent = text;
-                overallStatus.classList.remove('text-gray-400', 'text-white', 'text-gray-700');
+            function applyStatusUI(type, message) {
+                statusContainer.classList.remove('border-slate-700', 'border-emerald-500/50', 'border-rose-500/50', 'bg-emerald-950/20', 'bg-rose-950/20');
+                mainStatus.classList.remove('text-slate-600', 'text-emerald-400', 'text-rose-500', 'glow-green', 'glow-red');
                 
-                if (colorClass === 'bg-gray-50') {
-                    overallStatus.classList.add('text-gray-700');
-                    statusBox.className = "p-5 text-center bg-gray-50 transition-all duration-300";
+                if (type === 'SUCCESS') {
+                    statusContainer.classList.add('border-emerald-500/50', 'bg-emerald-950/20', 'border-solid');
+                    mainStatus.classList.add('text-emerald-400', 'glow-green');
+                    mainStatus.innerText = message;
+                    statusDesc.innerText = "Values within permissible limits. The sample is compliant with safety standards.";
+                    statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+                } else if (type === 'DANGER') {
+                    statusContainer.classList.add('border-rose-500/50', 'bg-rose-950/20', 'border-solid');
+                    mainStatus.classList.add('text-rose-500', 'glow-red');
+                    mainStatus.innerText = message;
+                    statusDesc.innerText = "WARNING: Heavy metal concentrations exceed safety thresholds. Immediate sample exclusion required.";
+                    statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`;
                 } else {
-                    overallStatus.classList.add('text-white');
-                    statusBox.className = `p-5 text-center ${colorClass} shadow-inner transition-all duration-300 border-none`;
+                    statusContainer.classList.add('border-slate-700', 'border-dashed');
+                    mainStatus.classList.add('text-blue-400');
+                    mainStatus.innerText = message;
+                    statusDesc.innerText = "Process step completed. Proceed to next measurement or sample analysis.";
+                    statusIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
                 }
             }
 
-            // Function to handle reading and updating the UI
-            function performReading(mode) {
-                // Show loading indicator and disable all buttons
-                loadingIndicator.classList.remove('hidden');
-                [calibrateButton, standardButton, sampleButton].forEach(b => {
-                    b.classList.add('btn-disabled');
-                    b.disabled = true;
-                });
+            function triggerAnalysis(mode) {
+                loader.classList.remove('hidden');
+                [calibrateBtn, standardBtn, sampleBtn].forEach(b => b.disabled = true);
+                
+                // Clear UI briefly
+                absVal.innerText = "...";
+                cdVal.innerText = "...";
+                pbVal.innerText = "...";
+                absBar.style.width = "0%";
 
-                // Simulate processing time
                 setTimeout(() => {
-                    const sampleType = sampleTypeSelect.value;
-                    
+                    const matrix = sampleTypeSelect.value;
+                    let result;
+
                     if (mode === 'calibrate') {
-                        absorbanceValue.innerText = "0.000 Abs";
-                        cadmiumValue.innerText = "0.000 ppm";
-                        leadValue.innerText = "0.000 ppm";
-                        updateUIStatus("Calibration Successful", "bg-orange-500");
+                        result = { abs: "0.000", cd: "0.000", pb: "0.000", status: "READY: ZEROED", type: 'NEUTRAL' };
+                        lastCalText.innerText = new Date().toLocaleTimeString();
                     } 
                     else if (mode === 'standard') {
-                        absorbanceValue.innerText = "0.018 Abs";
-                        cadmiumValue.innerText = "0.000 ppm";
-                        leadValue.innerText = "0.000 ppm";
-                        updateUIStatus("Standard Reference Loaded", "bg-gray-600");
+                        result = { abs: "0.018", cd: "0.000", pb: "0.000", status: "REF LOADED", type: 'NEUTRAL' };
                     } 
-                    else if (mode === 'sample') {
-                        const dataset = SAMPLE_DATA[sampleType] || SAMPLE_DATA['beverages'];
-                        
-                        // Get the current index for this sample type
-                        const currentIndex = sampleCounters[sampleType];
-                        const selectedSample = dataset[currentIndex];
-
-                        // Update results
-                        absorbanceValue.innerText = selectedSample.abs + " Abs";
-                        cadmiumValue.innerText = selectedSample.cd + " ppm";
-                        leadValue.innerText = selectedSample.pb + " ppm";
-                        
-                        updateUIStatus(selectedSample.status, selectedSample.color);
-
-                        // Increment counter and loop back to 0 if at the end of dataset
-                        sampleCounters[sampleType] = (currentIndex + 1) % dataset.length;
+                    else {
+                        const data = SAMPLE_DATA[matrix];
+                        const idx = counters[matrix];
+                        result = data[idx];
+                        counters[matrix] = (idx + 1) % data.length;
                     }
+
+                    // Populate Values
+                    absVal.innerText = result.abs;
+                    cdVal.innerText = result.cd;
+                    pbVal.innerText = result.pb;
                     
-                    // Hide loading and re-enable
-                    loadingIndicator.classList.add('hidden');
-                    [calibrateButton, standardButton, sampleButton].forEach(b => {
-                        b.classList.remove('btn-disabled');
-                        b.disabled = false;
-                    });
-                }, 800);
+                    // Bar animation
+                    const absNum = parseFloat(result.abs);
+                    const barWidth = Math.min(absNum * 100, 100);
+                    absBar.style.width = barWidth + "%";
+                    
+                    applyStatusUI(result.type, result.status);
+
+                    loader.classList.add('hidden');
+                    [calibrateBtn, standardBtn, sampleBtn].forEach(b => b.disabled = false);
+                }, 1200);
             }
 
-            calibrateButton.addEventListener('click', () => performReading('calibrate'));
-            standardButton.addEventListener('click', () => performReading('standard'));
-            sampleButton.addEventListener('click', () => performReading('sample'));
+            calibrateBtn.onclick = () => triggerAnalysis('calibrate');
+            standardBtn.onclick = () => triggerAnalysis('standard');
+            sampleBtn.onclick = () => triggerAnalysis('sample');
         };
     </script>
 </body>
