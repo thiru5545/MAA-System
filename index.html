@@ -328,7 +328,7 @@
 
                     loader.classList.add('hidden');
                     [calibrateBtn, standardBtn, sampleBtn].forEach(b => b.disabled = false);
-                }, 1000);
+                }, 5000);
             }
 
             calibrateBtn.onclick = () => triggerAnalysis('calibrate');
